@@ -94,6 +94,12 @@ public class QObject {
         return isPrototype? this : parent;
     }
 
+    public QObject value() {
+        if (this instanceof ValueCarrier)
+            return ((ValueCarrier) this).getValue();
+        return this;
+    }
+
     public QObject derive(Runtime runtime) throws RuntimeStriker {
         if (!isPrototype)
             runtime.error(new QDerivationException("Attempt to inherit from non-prototype value", this));

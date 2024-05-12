@@ -451,6 +451,8 @@ public class Runtime {
 
     private QObject performBinaryOperation(QObject operandA, TokenType op, QObject operandB)
             throws RuntimeStriker {
+        operandA = operandA.value();
+        operandB = operandB.value();
         switch (op) {
             case PLUS: return operandA.sum(this, operandB);
             case MINUS: return operandA.subtract(this, operandB);
@@ -477,8 +479,10 @@ public class Runtime {
         return Val();
     }
 
+
     private QObject performUnaryOperation(TokenType op, QObject operandA)
             throws RuntimeStriker {
+        operandA = operandA.value();
         switch (op) {
             case NOT: return operandA.not(this);
             case MINUS: return operandA.negate(this);
@@ -885,6 +889,10 @@ public class Runtime {
             QObject stepObject = null;
             if (thisNode.rangeStep != null)
                 stepObject = run(thisNode.rangeStep, scope);
+
+            if (startObject instanceof CustomRangeGenerator)
+                return ((CustomRangeGenerator) startObject).createCustomRange(endObject, stepObject);
+
             if (!startObject.isNum())
                 error(new QUnsuitableTypeException("Number start", startObject));
             if (!endObject.isNum())
